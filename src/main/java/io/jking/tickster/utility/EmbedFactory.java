@@ -1,7 +1,7 @@
 package io.jking.tickster.utility;
 
-import io.jking.tickster.command.type.ErrorType;
-import io.jking.tickster.command.type.SuccessType;
+import io.jking.tickster.interaction.impl.slash.core.type.ErrorType;
+import io.jking.tickster.interaction.impl.slash.core.type.SuccessType;
 import io.jking.tickster.jooq.tables.records.GuildReportsRecord;
 import io.jking.tickster.jooq.tables.records.GuildTicketsRecord;
 import net.dv8tion.jda.api.EmbedBuilder;

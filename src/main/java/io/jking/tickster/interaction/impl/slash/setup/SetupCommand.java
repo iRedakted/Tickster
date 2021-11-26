@@ -1,11 +1,10 @@
-package io.jking.tickster.command.impl.setup;
+package io.jking.tickster.interaction.impl.slash.setup;
 
-import io.jking.tickster.command.Category;
-import io.jking.tickster.command.Command;
-import io.jking.tickster.command.CommandContext;
-import io.jking.tickster.command.CommandError;
-import io.jking.tickster.command.type.ErrorType;
-import io.jking.tickster.command.type.SuccessType;
+import io.jking.tickster.interaction.context.SlashContext;
+import io.jking.tickster.interaction.impl.slash.core.Category;
+import io.jking.tickster.interaction.impl.slash.core.Command;
+import io.jking.tickster.interaction.impl.slash.core.type.ErrorType;
+import io.jking.tickster.interaction.impl.slash.core.type.SuccessType;
 import io.jking.tickster.utility.EmbedFactory;
 import io.jking.tickster.utility.MiscUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -44,7 +43,7 @@ public class SetupCommand extends Command {
     }
 
     @Override
-    public void onCommand(CommandContext ctx, CommandError err) {
+    public void onCommand(SlashContext ctx) {
         final String subCommand = ctx.getSubCommand();
 
         switch (subCommand.toLowerCase()) {

@@ -1,10 +1,9 @@
-package io.jking.tickster.command.impl.report;
+package io.jking.tickster.interaction.impl.slash.report;
 
-import io.jking.tickster.command.Category;
-import io.jking.tickster.command.Command;
-import io.jking.tickster.command.CommandContext;
-import io.jking.tickster.command.CommandError;
-import io.jking.tickster.command.type.ErrorType;
+import io.jking.tickster.interaction.context.SlashContext;
+import io.jking.tickster.interaction.impl.slash.core.Category;
+import io.jking.tickster.interaction.impl.slash.core.Command;
+import io.jking.tickster.interaction.impl.slash.core.type.ErrorType;
 import io.jking.tickster.jooq.tables.records.GuildReportsRecord;
 import io.jking.tickster.utility.EmbedFactory;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -37,7 +36,7 @@ public class ReportCommand extends Command {
     }
 
     @Override
-    public void onCommand(CommandContext ctx, CommandError err) {
+    public void onCommand(SlashContext ctx) {
         final List<OptionMapping> options = ctx.getOptionsByType(OptionType.USER);
 
         if (options.isEmpty()) {

@@ -4,8 +4,7 @@ import io.jking.tickster.cache.Cache;
 import io.jking.tickster.cache.impl.GuildCache;
 import io.jking.tickster.cache.impl.ReportCache;
 import io.jking.tickster.cache.impl.TicketCache;
-import io.jking.tickster.command.CommandRegistry;
-import io.jking.tickster.command.type.ErrorType;
+import io.jking.tickster.interaction.impl.slash.core.type.ErrorType;
 import io.jking.tickster.database.Database;
 import io.jking.tickster.utility.EmbedFactory;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -14,13 +13,12 @@ import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.GenericComponentInteractionCreateEvent;
+import net.dv8tion.jda.api.events.interaction.GenericInteractionCreateEvent;
 import net.dv8tion.jda.api.interactions.Interaction;
 import net.dv8tion.jda.api.interactions.InteractionHook;
 import net.dv8tion.jda.api.requests.restaction.interactions.ReplyAction;
-import net.dv8tion.jda.api.requests.restaction.interactions.UpdateInteractionAction;
 
-public abstract class AbstractContext<T extends GenericComponentInteractionCreateEvent> {
+public abstract class AbstractContext<T extends GenericInteractionCreateEvent> {
 
     private final T event;
     private final CommandRegistry registry;
@@ -59,7 +57,7 @@ public abstract class AbstractContext<T extends GenericComponentInteractionCreat
     }
 
     public String getComponentId() {
-        return event.getComponentId();
+        return event.getId();
     }
 
     public Guild getGuild() {
@@ -101,10 +99,6 @@ public abstract class AbstractContext<T extends GenericComponentInteractionCreat
 
     public ReplyAction reply(EmbedBuilder embed) {
         return getEvent().replyEmbeds(embed.build());
-    }
-
-    public UpdateInteractionAction deferEdit() {
-        return getEvent().deferEdit();
     }
 
     public ReplyAction deferReply() {

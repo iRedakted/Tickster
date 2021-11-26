@@ -1,25 +1,19 @@
 package io.jking.tickster.core;
 
 import io.jking.tickster.cache.Cache;
-import io.jking.tickster.command.CommandRegistry;
-import io.jking.tickster.command.impl.info.AboutCommand;
-import io.jking.tickster.command.impl.report.ReportCommand;
-import io.jking.tickster.command.impl.setup.SetupCommand;
-import io.jking.tickster.command.impl.tickets.TicketCommand;
-import io.jking.tickster.command.impl.utility.PingCommand;
-import io.jking.tickster.command.impl.utility.TestCommand;
+import io.jking.tickster.interaction.Registry;
+import io.jking.tickster.interaction.impl.slash.utility.TestCommand;
 import io.jking.tickster.database.Database;
 import io.jking.tickster.database.Hikari;
 import io.jking.tickster.handler.GuildHandler;
 import io.jking.tickster.handler.InteractionHandler;
 import io.jking.tickster.handler.StartHandler;
-import io.jking.tickster.utility.ScheduledTask;
-import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.JDABuilder;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.exceptions.ErrorHandler;
-import net.dv8tion.jda.api.requests.ErrorResponse;
+import io.jking.tickster.interaction.registry.ButtonRegistry;
+import io.jking.tickster.interaction.registry.CommandRegistry;
+import io.jking.tickster.interaction.registry.SelectionRegistry;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.api.sharding.ShardManager;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
@@ -32,28 +26,25 @@ import javax.security.auth.login.LoginException;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import static io.jking.tickster.jooq.tables.GuildTickets.GUILD_TICKETS;
 
 public class Tickster {
 
     private final Logger logger = LoggerFactory.getLogger(Tickster.class);
 
-    private final CommandRegistry commandRegistry = new CommandRegistry()
-            .addCommands(new TestCommand(), new PingCommand())
-            .addCommands(new AboutCommand(), new SetupCommand())
-            .addCommands(new ReportCommand(), new TicketCommand());
+    private final CommandRegistry commandRegistry = new Registry()
+            .put("test", new TestCommand());
 
+
+    private final SelectionRegistry selectionRegistry = new SelectionRegistry();
+    private final ButtonRegistry buttonRegistry = new ButtonRegistry();
 
     private final DataObject data;
     private final Database database;
     private final Cache cache;
 
-    private JDA jda;
+    private ShardManager shardManager;
 
     private Tickster(String configPath) throws IOException {
         this.data = loadConfig(configPath);
@@ -79,7 +70,7 @@ public class Tickster {
         final String token = data.getObject("bot").getString("token", null);
         Checks.notNull(token, "Config Token");
 
-        this.jda = JDABuilder.createDefault(token)
+        this.shardManager = DefaultShardManagerBuilder.createDefault(token)
                 .setMemberCachePolicy(MemberCachePolicy.NONE)
                 .setChunkingFilter(ChunkingFilter.NONE)
                 .setEnabledIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_MESSAGES)
@@ -89,50 +80,17 @@ public class Tickster {
                         new StartHandler(this, cache),
                         new GuildHandler(commandRegistry, database, cache)
                 )
-                .build()
-                .awaitReady();
-
-        startScheduledTasks();
+                .build();
     }
 
-    // This deletes entries/channels from the database table/guild if they are 1 week old.
-    // TODO: Once we begin sharding, this will be non-functional and will have to be adjusted.
-    private void startScheduledTasks() {
-        if (jda == null)
-            return;
-
-        ScheduledTask.scheduleTask(() -> {
-            final LocalDateTime future = LocalDateTime.now().plusDays(7);
-            logger.info("Running Scheduled Task");
-            database.getDSL().deleteFrom(GUILD_TICKETS)
-                    .where(GUILD_TICKETS.TICKET_TIMESTAMP.ge(future))
-                    .returning()
-                    .fetchAsync()
-                    .whenCompleteAsync((result, throwable) -> {
-                        if (throwable != null)
-                            return;
-
-                        final List<Long> channelIds = result.getValues(GUILD_TICKETS.CHANNEL_ID);
-                        if (channelIds.isEmpty())
-                            return;
-
-                        channelIds.forEach(channelId -> {
-                            final TextChannel channel = jda.getTextChannelById(channelId);
-                            if (channel != null) {
-                                channel.delete().queue(null, new ErrorHandler().ignore(Arrays.asList(ErrorResponse.values())));
-                            }
-                        });
-                    });
-        }, 20, TimeUnit.MINUTES);
-
-    }
+    // TODO: Implement task that deletes expired tickets/reports.
 
     public DataObject getData() {
         return data;
     }
 
-    public JDA getJda() {
-        return jda;
+    public ShardManager getShardManager() {
+        return shardManager;
     }
 
     public Database getDatabase() {

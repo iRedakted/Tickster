@@ -1,6 +1,6 @@
 package io.jking.tickster.interaction.impl.selection;
 
-import io.jking.tickster.command.type.ErrorType;
+import io.jking.tickster.interaction.impl.slash.core.type.ErrorType;
 import io.jking.tickster.interaction.context.SelectionContext;
 import io.jking.tickster.interaction.type.ISelection;
 import io.jking.tickster.jooq.tables.records.GuildTicketsRecord;

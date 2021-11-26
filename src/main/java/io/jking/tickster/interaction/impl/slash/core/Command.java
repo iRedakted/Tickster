@@ -1,5 +1,6 @@
-package io.jking.tickster.command;
+package io.jking.tickster.interaction.impl.slash.core;
 
+import io.jking.tickster.interaction.context.SlashContext;
 import io.jking.tickster.utility.EmbedFactory;
 import io.jking.tickster.utility.MiscUtil;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -27,7 +28,7 @@ public abstract class Command extends CommandData {
         this.permission = permission;
     }
 
-    public abstract void onCommand(CommandContext ctx, CommandError err);
+    public abstract void onCommand(SlashContext ctx);
 
     public Category getCategory() {
         return category;

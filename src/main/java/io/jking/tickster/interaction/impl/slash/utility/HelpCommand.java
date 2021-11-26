@@ -1,8 +1,10 @@
-package io.jking.tickster.command.impl.utility;
+package io.jking.tickster.interaction.impl.slash.utility;
 
 
-import io.jking.tickster.command.*;
-import io.jking.tickster.command.type.ErrorType;
+import io.jking.tickster.interaction.context.SlashContext;
+import io.jking.tickster.interaction.impl.slash.core.Category;
+import io.jking.tickster.interaction.impl.slash.core.Command;
+import io.jking.tickster.interaction.impl.slash.core.type.ErrorType;
 import io.jking.tickster.utility.EmbedFactory;
 import io.jking.tickster.utility.MiscUtil;
 import net.dv8tion.jda.api.entities.Member;
@@ -22,7 +24,7 @@ public class HelpCommand extends Command {
     }
 
     @Override
-    public void onCommand(CommandContext ctx, CommandError err) {
+    public void onCommand(SlashContext ctx) {
         final String input = ctx.getOptionString("input");
         if (input == null) {
             sendCategoriesMenu(ctx, ctx.getMember());

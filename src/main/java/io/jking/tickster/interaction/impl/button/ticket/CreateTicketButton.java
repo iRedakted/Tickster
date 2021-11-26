@@ -1,6 +1,6 @@
 package io.jking.tickster.interaction.impl.button.ticket;
 
-import io.jking.tickster.command.type.ErrorType;
+import io.jking.tickster.interaction.impl.slash.core.type.ErrorType;
 import io.jking.tickster.interaction.context.ButtonContext;
 import io.jking.tickster.interaction.type.IButton;
 import io.jking.tickster.utility.EmbedFactory;

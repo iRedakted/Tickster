@@ -1,10 +1,9 @@
-package io.jking.tickster.command.impl.tickets;
+package io.jking.tickster.interaction.impl.slash.tickets;
 
-import io.jking.tickster.command.Category;
-import io.jking.tickster.command.Command;
-import io.jking.tickster.command.CommandContext;
-import io.jking.tickster.command.CommandError;
-import io.jking.tickster.command.type.ErrorType;
+import io.jking.tickster.interaction.context.SlashContext;
+import io.jking.tickster.interaction.impl.slash.core.Category;
+import io.jking.tickster.interaction.impl.slash.core.Command;
+import io.jking.tickster.interaction.impl.slash.core.type.ErrorType;
 import io.jking.tickster.jooq.tables.records.GuildTicketsRecord;
 import io.jking.tickster.utility.EmbedFactory;
 import io.jking.tickster.utility.MiscUtil;
@@ -26,7 +25,7 @@ public class TicketCommand extends Command {
     }
 
     @Override
-    public void onCommand(CommandContext ctx, CommandError err) {
+    public void onCommand(SlashContext ctx) {
         final String subCommand = ctx.getSubCommand();
 
         switch (subCommand.toLowerCase()) {

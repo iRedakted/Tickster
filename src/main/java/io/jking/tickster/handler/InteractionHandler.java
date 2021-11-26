@@ -1,14 +1,11 @@
 package io.jking.tickster.handler;
 
 import io.jking.tickster.cache.Cache;
-import io.jking.tickster.command.Command;
-import io.jking.tickster.command.CommandContext;
-import io.jking.tickster.command.CommandError;
-import io.jking.tickster.command.CommandRegistry;
-import io.jking.tickster.command.impl.utility.HelpCommand;
-import io.jking.tickster.command.type.ErrorType;
+import io.jking.tickster.interaction.context.SlashContext;
+import io.jking.tickster.interaction.impl.slash.core.Command;
+import io.jking.tickster.interaction.impl.slash.utility.HelpCommand;
+import io.jking.tickster.interaction.impl.slash.core.type.ErrorType;
 import io.jking.tickster.database.Database;
-import io.jking.tickster.interaction.RegistryHandler;
 import io.jking.tickster.interaction.context.ButtonContext;
 import io.jking.tickster.interaction.context.SelectionContext;
 import io.jking.tickster.interaction.type.IButton;
@@ -107,10 +104,9 @@ public class InteractionHandler implements EventListener {
             return;
         }
 
-        final CommandContext commandContext = new CommandContext(event, database, cache);
-        final CommandError errorContext = new CommandError(commandContext);
+        final SlashContext context = new SlashContext(event, commandRegistry, database, cache);
 
-        command.onCommand(commandContext, errorContext);
+        command.onCommand(context);
     }
 
     private void sendPrivateMessage(Member member) {
